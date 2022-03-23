@@ -1,1 +1,3 @@
 # BinarChallengeEmpat
+
+0%
