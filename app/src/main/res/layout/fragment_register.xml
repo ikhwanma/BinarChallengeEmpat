@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp"
+    tools:context=".ui.fragment.RegisterFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/TextStyle"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/register"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="20dp"
+            app:cardCornerRadius="10dp">
+
+            <ImageView
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:contentDescription="@string/logo"
+                android:src="@drawable/ic_green_sticky_note_2_24" />
+        </androidx.cardview.widget.CardView>
+
+        <EditText
+            android:id="@+id/input_nama"
+            style="@style/InputTextStyle"
+            android:hint="@string/masukkan_nama"
+            android:inputType="text"
+            tools:ignore="Autofill" />
+
+        <EditText
+            android:id="@+id/input_email"
+            style="@style/InputTextStyle"
+            android:layout_marginTop="10dp"
+            android:hint="@string/masukkan_email"
+            android:inputType="textEmailAddress"
+            tools:ignore="Autofill" />
+
+        <EditText
+            android:id="@+id/input_password"
+            style="@style/InputTextStyle"
+            android:layout_marginTop="10dp"
+            android:hint="@string/masukkan_password"
+            android:inputType="textPassword"
+            tools:ignore="Autofill" />
+
+        <EditText
+            android:id="@+id/input_konf_password"
+            style="@style/InputTextStyle"
+            android:layout_marginTop="10dp"
+            android:hint="@string/masukkan_konfirmasi_password"
+            android:inputType="textPassword"
+            tools:ignore="Autofill" />
+    </LinearLayout>
+
+
+    <Button
+        android:layout_marginBottom="80dp"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/btn_register"
+        style="@style/ButtonStyle"
+        android:text="@string/register" />
+
+</RelativeLayout>

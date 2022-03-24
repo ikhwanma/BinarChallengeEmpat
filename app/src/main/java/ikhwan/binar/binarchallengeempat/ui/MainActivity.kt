@@ -1,7 +1,8 @@
-package ikhwan.binar.binarchallengeempat
+package ikhwan.binar.binarchallengeempat.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import ikhwan.binar.binarchallengeempat.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
