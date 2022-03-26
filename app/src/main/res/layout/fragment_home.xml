@@ -29,7 +29,7 @@
         android:layout_height="0dp"
         android:layout_below="@id/tv_username"
         android:layout_alignParentBottom="true"
-        />
+        tools:listitem="@layout/item_note"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_float_add"
