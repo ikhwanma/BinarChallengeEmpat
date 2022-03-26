@@ -11,62 +11,86 @@ import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import ikhwan.binar.binarchallengeempat.R
 import ikhwan.binar.binarchallengeempat.database.user.UserDatabase
-import kotlinx.android.synthetic.main.fragment_login.*
-import kotlinx.android.synthetic.main.fragment_login.btn_register
-import kotlinx.android.synthetic.main.fragment_login.input_email
-import kotlinx.android.synthetic.main.fragment_login.input_password
-import kotlinx.android.synthetic.main.fragment_register.*
+import ikhwan.binar.binarchallengeempat.databinding.FragmentLoginBinding
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import java.util.regex.Pattern
 
 
-class LoginFragment : Fragment() {
+class LoginFragment : Fragment() , View.OnClickListener{
 
+    private var _binding: FragmentLoginBinding? = null
+    private val binding get() = _binding!!
     private var userDatabase: UserDatabase? = null
+
+    private lateinit var email: String
+    private lateinit var password: String
+    private var cek: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_login, container, false)
+    ): View {
+        _binding = FragmentLoginBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         userDatabase = UserDatabase.getInstance(requireContext())
+        binding.btnLogin.setOnClickListener(this)
+        binding.btnRegister.setOnClickListener(this)
+    }
 
-        btn_login.setOnClickListener {
-            login()
-        }
-        btn_register.setOnClickListener {
-            it.findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+    override fun onClick(p0: View?) {
+        when(p0?.id){
+            R.id.btn_login ->{
+                login()
+            }
+            R.id.btn_register -> {
+                p0.findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+            }
         }
     }
 
     private fun login() {
-        val email = input_email.text.toString()
-        val password = input_password.text.toString()
-        val cek = isValidEmail(email)
+        binding.apply {
+            email = inputEmail.text.toString()
+            password = inputPassword.text.toString()
+            cek = isValidEmail(email)
+        }
 
+        if (inputCheck(email,password,cek)){
+            loginUser(email, password)
+        }
+    }
+
+    private fun inputCheck(email: String, password: String, cek: Boolean) : Boolean{
         if (email.isEmpty() || password.isEmpty() || !cek
         ) {
             if (email.isEmpty()) {
-                input_email.setError("Email Tidak Boleh Kosong")
-                input_email.requestFocus()
+                binding.apply {
+                    inputEmail.setError("Email Tidak Boleh Kosong")
+                    inputEmail.requestFocus()
+                }
+
             }
             if (password.isEmpty()) {
-                input_password.setError("Password Tidak Boleh Kosong")
-                input_password.requestFocus()
+                binding.apply {
+                    inputPassword.setError("Password Tidak Boleh Kosong")
+                    inputPassword.requestFocus()
+                }
             }
             if (!cek) {
-                input_email.setError("Email Tidak Sesuai Format")
-                input_email.requestFocus()
+                binding.apply {
+                    inputEmail.setError("Email Tidak Sesuai Format")
+                    inputEmail.requestFocus()
+                }
             }
-            return
+            return false
+        }else{
+            return true
         }
-
-        loginUser(email, password)
     }
 
     private fun loginUser(email : String, password : String) {
@@ -101,6 +125,10 @@ class LoginFragment : Fragment() {
         return EMAIL_ADDRESS_PATTERN.matcher(email).matches()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
 
 
 }

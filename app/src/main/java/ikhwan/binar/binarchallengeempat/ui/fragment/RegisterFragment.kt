@@ -7,100 +7,147 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import ikhwan.binar.binarchallengeempat.R
 import ikhwan.binar.binarchallengeempat.database.user.User
 import ikhwan.binar.binarchallengeempat.database.user.UserDatabase
-import kotlinx.android.synthetic.main.fragment_register.*
+import ikhwan.binar.binarchallengeempat.databinding.FragmentRegisterBinding
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import java.util.regex.Pattern
 
-class RegisterFragment : Fragment() {
+class RegisterFragment : Fragment() , View.OnClickListener{
+
+    private var _binding: FragmentRegisterBinding? = null
+    private val binding get() = _binding!!
 
     private var userDatabase: UserDatabase? = null
+
+    private lateinit var name: String
+    private lateinit var email: String
+    private lateinit var password: String
+    private var cek: Boolean = false
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_register, container, false)
+    ): View {
+        _binding = FragmentRegisterBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         userDatabase = UserDatabase.getInstance(requireContext())
+        binding.btnRegister.setOnClickListener(this)
+    }
 
-        btn_register.setOnClickListener {
-            val nama = input_nama.text.toString()
-            val email = input_email.text.toString()
-            val password = input_password.text.toString()
-            val cek = isValidEmail(email)
-            val user = User(null, nama, email, password)
-
-            if (nama.isEmpty() || email.isEmpty() || password.isEmpty() || !cek
-                || input_konf_password.text.toString() != password || password.length < 6
-            ) {
-                if (nama.isEmpty()) {
-                    input_nama.setError("Username Tidak Boleh Kosong")
-                    input_nama.requestFocus()
-                }
-                if (email.isEmpty()) {
-                    input_email.setError("Email Tidak Boleh Kosong")
-                    input_email.requestFocus()
-                }
-                if (password.isEmpty()) {
-                    input_password.setError("Password Tidak Boleh Kosong")
-                    input_password.requestFocus()
-                }
-                if (!cek) {
-                    input_email.setError("Email Tidak Sesuai Format")
-                    input_email.requestFocus()
-                }
-                if (input_konf_password.text.toString() != password) {
-                    input_konf_password.setError("Password Tidak Sama")
-                    input_konf_password.requestFocus()
-                }
-                if (password.length < 6) {
-                    input_password.setError("Password minimal 6 karakter")
-                    input_password.requestFocus()
-                }
-                return@setOnClickListener
+    override fun onClick(p0: View?) {
+        when(p0?.id){
+            R.id.btn_register -> {
+                register()
             }
+        }
+    }
 
-            GlobalScope.async {
-                val cekUser = userDatabase?.userDao()?.getUserRegistered(email)
-                Log.d("cekuser", cekUser.toString())
-                if (cekUser != null) {
-                    requireActivity().runOnUiThread {
+    private fun register(){
+        binding.apply {
+            name = inputNama.text.toString()
+            email = inputEmail.text.toString()
+            password = inputPassword.text.toString()
+            cek = isValidEmail(email)
+        }
+
+        if (inputCheck(name, email, password, cek)){
+            registerUser(name, email, password)
+        }
+    }
+
+    private fun registerUser(name: String, email: String, password: String) {
+        val user = User(null, name, email, password)
+        GlobalScope.async {
+            val cekUser = userDatabase?.userDao()?.getUserRegistered(email)
+            Log.d("cekuser", cekUser.toString())
+            if (cekUser != null) {
+                requireActivity().runOnUiThread {
+                    Toast.makeText(
+                        requireContext(),
+                        "User dengan email ${user.email} sudah terdaftar",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            } else {
+                val result = userDatabase?.userDao()?.registerUser(user)
+                requireActivity().runOnUiThread {
+                    if (result != 0.toLong()) {
                         Toast.makeText(
                             requireContext(),
-                            "User dengan email ${user.email} sudah terdaftar",
-                            Toast.LENGTH_SHORT
+                            "Sukses mendaftarkan ${user.email}, silakan mencoba untuk login",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        Navigation.findNavController(requireView())
+                            .navigate(R.id.action_registerFragment_to_loginFragment)
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "Gagal mendaftarkan ${user.email}, silakan coba lagi",
+                            Toast.LENGTH_LONG
                         ).show()
                     }
-                } else {
-                    val result = userDatabase?.userDao()?.registerUser(user)
-                    requireActivity().runOnUiThread {
-                        if (result != 0.toLong()) {
-                            Toast.makeText(
-                                requireContext(),
-                                "Sukses mendaftarkan ${user.email}, silakan mencoba untuk login",
-                                Toast.LENGTH_LONG
-                            ).show()
-                            it.findNavController()
-                                .navigate(R.id.action_registerFragment_to_loginFragment)
-                        } else {
-                            Toast.makeText(
-                                requireContext(),
-                                "Gagal mendaftarkan ${user.email}, silakan coba lagi",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-                    }
+                }
+            }
+
+        }
+    }
+
+
+    private fun inputCheck(name: String, email: String, password: String, cek: Boolean) : Boolean {
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty() || !cek
+            || binding.inputKonfPassword.text.toString() != password || password.length < 6
+        ) {
+            if (name.isEmpty()) {
+                binding.apply {
+                    inputNama.setError("Username Tidak Boleh Kosong")
+                    inputNama.requestFocus()
                 }
 
             }
+            if (email.isEmpty()) {
+                binding.apply {
+                    inputEmail.setError("Email Tidak Boleh Kosong")
+                    inputEmail.requestFocus()
+                }
+            }
+            if (password.isEmpty()) {
+                binding.apply {
+                    inputPassword.setError("Password Tidak Boleh Kosong")
+                    inputPassword.requestFocus()
+                }
+            }
+            if (!cek) {
+                binding.apply {
+                    inputEmail.setError("Email Tidak Sesuai Format")
+                    inputEmail.requestFocus()
+                }
+            }
+            if (binding.inputKonfPassword.text.toString() != password) {
+                binding.apply {
+                    inputKonfPassword.setError("Password Tidak Sama")
+                    inputKonfPassword.requestFocus()
+                }
+
+            }
+            if (password.length < 6) {
+                binding.apply {
+                    inputPassword.setError("Password minimal 6 karakter")
+                    inputPassword.requestFocus()
+                }
+            }
+            return false
+        }else{
+            return true
         }
     }
 
@@ -116,4 +163,11 @@ class RegisterFragment : Fragment() {
         )
         return EMAIL_ADDRESS_PATTERN.matcher(email).matches()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
+
 }
