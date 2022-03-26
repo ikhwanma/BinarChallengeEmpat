@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="20dp"
+    android:orientation="vertical">
+
+
+    <TextView
+        style="@style/TextStyle"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:text="@string/input_data"
+        android:textSize="25sp" />
+
+    <EditText
+        android:id="@+id/input_judul"
+        style="@style/InputTextStyle"
+        android:layout_marginTop="10dp"
+        android:autofillHints="name"
+        android:hint="@string/masukkan_judul"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/input_catatan"
+        style="@style/InputTextStyle"
+        android:layout_height="100dp"
+        android:layout_marginTop="10dp"
+        android:autofillHints="name"
+        android:hint="@string/masukkan_catatan"
+        android:inputType="textMultiLine"
+        />
+
+    <Button
+        android:id="@+id/btn_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginVertical="10dp"
+        android:text="@string/input" />
+
+</LinearLayout>

@@ -10,4 +10,11 @@
     <string name="register">Register</string>
     <string name="masukkan_nama">Masukkan Nama</string>
     <string name="masukkan_konfirmasi_password">Masukkan Konfirmasi Password</string>
+    <string name="welcome">Welcome,</string>
+    <string name="logout">Logout</string>
+    <string name="float_add">Float Add</string>
+    <string name="input_data">Input Data</string>
+    <string name="masukkan_judul">Masukkan Judul</string>
+    <string name="masukkan_catatan">Masukkan Catatan</string>
+    <string name="input">Input</string>
 </resources>
