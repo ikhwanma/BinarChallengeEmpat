@@ -23,4 +23,5 @@
     <string name="hapus_data">Hapus Data</string>
     <string name="hapus">HAPUS</string>
     <string name="cancel">CANCEL</string>
+    <string name="anda_belum_memiliki_note">Anda Belum Memiliki Note</string>
 </resources>

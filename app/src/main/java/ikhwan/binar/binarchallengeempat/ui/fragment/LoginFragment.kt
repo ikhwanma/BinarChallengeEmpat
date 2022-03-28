@@ -1,5 +1,7 @@
 package ikhwan.binar.binarchallengeempat.ui.fragment
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,6 +12,7 @@ import androidx.core.os.bundleOf
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import ikhwan.binar.binarchallengeempat.R
+import ikhwan.binar.binarchallengeempat.database.user.User
 import ikhwan.binar.binarchallengeempat.database.user.UserDatabase
 import ikhwan.binar.binarchallengeempat.databinding.FragmentLoginBinding
 import kotlinx.coroutines.GlobalScope
@@ -22,10 +25,13 @@ class LoginFragment : Fragment() , View.OnClickListener{
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
     private var userDatabase: UserDatabase? = null
+    private lateinit var sharedPreferences: SharedPreferences
 
     private lateinit var email: String
     private lateinit var password: String
     private var cek: Boolean = false
+    private lateinit var user : User
+    private lateinit var mBundle: Bundle
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,7 +43,14 @@ class LoginFragment : Fragment() , View.OnClickListener{
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        sharedPreferences = requireActivity().getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
+        val email = sharedPreferences.getString(HomeFragment.EMAIL, "")
         userDatabase = UserDatabase.getInstance(requireContext())
+
+        if (email != ""){
+            val mBundle = bundleOf(HomeFragment.EMAIL to email)
+            Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_homeFragment, mBundle)
+        }
         binding.btnLogin.setOnClickListener(this)
         binding.btnRegister.setOnClickListener(this)
     }
@@ -100,6 +113,9 @@ class LoginFragment : Fragment() , View.OnClickListener{
             requireActivity().runOnUiThread{
                 if (user != null) {
                     if (email == user.email && password == user.password){
+                        val editor:SharedPreferences.Editor = sharedPreferences.edit()
+                        editor.putString(HomeFragment.EMAIL, email)
+                        editor.apply()
                         Navigation.findNavController(requireView()).navigate(R.id.action_loginFragment_to_homeFragment, mBundle)
                     }else{
                         Toast.makeText(requireContext(), "Password yang anda masukkan salah", Toast.LENGTH_SHORT).show()

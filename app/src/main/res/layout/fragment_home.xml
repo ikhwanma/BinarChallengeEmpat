@@ -43,4 +43,27 @@
         android:contentDescription="@string/float_add"
         tools:ignore="RelativeOverlap" />
 
+    <LinearLayout
+        android:id="@+id/ll_warn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        tools:ignore="UseCompoundDrawables">
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/ic_green_sticky_note_2_24"
+            android:contentDescription="@string/logo"
+            android:alpha="0.5"/>
+        <TextView
+            style="@style/TextStyle"
+            android:text="@string/anda_belum_memiliki_note"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:alpha="0.5"
+            />
+    </LinearLayout>
+
 </RelativeLayout>

@@ -1,18 +1,25 @@
 package ikhwan.binar.binarchallengeempat.ui.fragment
 
 import android.app.AlertDialog
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
+import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import ikhwan.binar.binarchallengeempat.R
 import ikhwan.binar.binarchallengeempat.adapter.NoteAdapter
 import ikhwan.binar.binarchallengeempat.database.note.Note
 import ikhwan.binar.binarchallengeempat.database.note.NoteDatabase
 import ikhwan.binar.binarchallengeempat.database.user.User
+import ikhwan.binar.binarchallengeempat.database.user.UserDatabase
 import ikhwan.binar.binarchallengeempat.databinding.FragmentHomeBinding
 import kotlinx.android.synthetic.main.dialog_add.view.*
 import kotlinx.coroutines.GlobalScope
@@ -26,7 +33,9 @@ class HomeFragment : Fragment(), View.OnClickListener {
     private val binding get() = _binding!!
 
     private lateinit var noteDatabase: NoteDatabase
+    private lateinit var userDatabase: UserDatabase
     private lateinit var user: User
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,21 +47,36 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        user = arguments?.getParcelable<User>(EXTRA_USER) as User
-        val name = user.nama.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
-        val txtName =
-            " $name!"
-
         noteDatabase = NoteDatabase.getInstance(requireContext())!!
+        userDatabase = UserDatabase.getInstance(requireContext())!!
+        sharedPreferences =
+            requireActivity().getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
+        val email = sharedPreferences.getString(EMAIL, "").toString()
+        Log.d(EXTRA_USER, "${email} halo")
+
+        GlobalScope.async {
+            user = userDatabase.userDao().getUserRegistered(email)
+            val name =
+                user.nama.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+            val txtName =
+                " $name!"
+
+            binding.apply {
+                tvUsername.append(txtName)
+            }
+
+            binding.rvNotes.layoutManager = LinearLayoutManager(activity)
+            fetchData()
+        }
 
         binding.apply {
-            tvUsername.append(txtName)
             btnLogout.setOnClickListener(this@HomeFragment)
             btnFloatAdd.setOnClickListener(this@HomeFragment)
         }
 
-        binding.rvNotes.layoutManager = LinearLayoutManager(activity)
-        fetchData()
+    }
+
+    private fun showMain() {
 
     }
 
@@ -61,10 +85,15 @@ class HomeFragment : Fragment(), View.OnClickListener {
             val listNote = noteDatabase.noteDao().getNote(user.email)
 
             requireActivity().runOnUiThread {
-              listNote.let {
-                  val adapter = NoteAdapter(it, this@HomeFragment)
-                  binding.rvNotes.adapter = adapter
-              }
+                listNote.let {
+                    val adapter = NoteAdapter(it, this@HomeFragment)
+                    if (adapter.itemCount == 0){
+                        binding.llWarn.visibility = View.VISIBLE
+                    }else{
+                        binding.llWarn.visibility = View.GONE
+                    }
+                    binding.rvNotes.adapter = adapter
+                }
             }
         }
     }
@@ -72,7 +101,12 @@ class HomeFragment : Fragment(), View.OnClickListener {
     override fun onClick(p0: View?) {
         when (p0?.id) {
             R.id.btn_logout -> {
-                Toast.makeText(requireContext(), "logout", Toast.LENGTH_SHORT).show()
+                val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                editor.clear()
+                editor.apply()
+
+                p0.findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
+                Toast.makeText(requireContext(), "Anda telah logout", Toast.LENGTH_SHORT).show()
             }
             R.id.btn_float_add -> {
                 showDialog()
@@ -99,7 +133,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
         val judul = view.input_judul.text.toString()
         val catatan = view.input_catatan.text.toString()
 
-        if (checkInput(judul,catatan,view)){
+        if (checkInput(judul, catatan, view)) {
             val note = Note(null, judul, catatan, user.email)
             addNote(dialog, note)
         }
@@ -123,26 +157,28 @@ class HomeFragment : Fragment(), View.OnClickListener {
     }
 
     private fun checkInput(judul: String, catatan: String, view: View): Boolean {
-        if (judul.isEmpty() || catatan.isEmpty()){
-            if (catatan.isEmpty()){
+        if (judul.isEmpty() || catatan.isEmpty()) {
+            if (catatan.isEmpty()) {
                 view.apply {
                     input_catatan.setError("Catatan tidak boleh kosong")
                     input_catatan.requestFocus()
                 }
             }
-            if (judul.isEmpty()){
+            if (judul.isEmpty()) {
                 view.apply {
                     input_judul.setError("Judul tidak boleh kosong")
                     input_judul.requestFocus()
                 }
             }
             return false
-        }else{
+        } else {
             return true
         }
     }
 
     companion object {
         const val EXTRA_USER = "extra_user"
+        const val EMAIL = "email"
+
     }
 }
