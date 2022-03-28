@@ -6,11 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.core.os.bundleOf
-import androidx.navigation.Navigation
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import ikhwan.binar.binarchallengeempat.R
 import ikhwan.binar.binarchallengeempat.adapter.NoteAdapter
@@ -55,18 +51,18 @@ class HomeFragment : Fragment(), View.OnClickListener {
             btnFloatAdd.setOnClickListener(this@HomeFragment)
         }
 
-        binding.rvNotes.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        binding.rvNotes.layoutManager = LinearLayoutManager(activity)
         fetchData()
 
     }
 
-    private fun fetchData() {
+    fun fetchData() {
         GlobalScope.launch {
             val listNote = noteDatabase.noteDao().getNote(user.email)
 
             requireActivity().runOnUiThread {
               listNote.let {
-                  val adapter = NoteAdapter(it)
+                  val adapter = NoteAdapter(it, this@HomeFragment)
                   binding.rvNotes.adapter = adapter
               }
             }
@@ -110,12 +106,12 @@ class HomeFragment : Fragment(), View.OnClickListener {
                 if (result != 0.toLong()) {
                     dialog.hide()
                     Toast.makeText(requireContext(), "Note Ditambahkan", Toast.LENGTH_SHORT).show()
-                    val mBundle = bundleOf(EXTRA_USER to user)
-                    requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_homeFragment_self, mBundle)
+
                 } else {
                     Toast.makeText(requireContext(), "Gagal Menambahkan", Toast.LENGTH_SHORT).show()
                 }
             }
+            fetchData()
         }
 
 
