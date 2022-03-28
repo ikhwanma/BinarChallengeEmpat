@@ -88,23 +88,30 @@ class HomeFragment : Fragment(), View.OnClickListener {
         val dialog = dialogBuilder.create()
 
         view.btn_input.setOnClickListener {
-            addNote(view, dialog)
+            add(view, dialog)
         }
 
         dialog.show()
 
     }
 
-    private fun addNote(view: View, dialog: AlertDialog) {
+    private fun add(view: View, dialog: AlertDialog) {
         val judul = view.input_judul.text.toString()
         val catatan = view.input_catatan.text.toString()
-        val note = Note(null, judul, catatan, user.email)
 
+        if (checkInput(judul,catatan,view)){
+            val note = Note(null, judul, catatan, user.email)
+            addNote(dialog, note)
+        }
+
+    }
+
+    private fun addNote(dialog: AlertDialog, note: Note) {
         GlobalScope.async {
             val result = noteDatabase.noteDao().addNote(note)
             requireActivity().runOnUiThread {
                 if (result != 0.toLong()) {
-                    dialog.hide()
+                    dialog.dismiss()
                     Toast.makeText(requireContext(), "Note Ditambahkan", Toast.LENGTH_SHORT).show()
 
                 } else {
@@ -113,8 +120,26 @@ class HomeFragment : Fragment(), View.OnClickListener {
             }
             fetchData()
         }
+    }
 
-
+    private fun checkInput(judul: String, catatan: String, view: View): Boolean {
+        if (judul.isEmpty() || catatan.isEmpty()){
+            if (catatan.isEmpty()){
+                view.apply {
+                    input_catatan.setError("Catatan tidak boleh kosong")
+                    input_catatan.requestFocus()
+                }
+            }
+            if (judul.isEmpty()){
+                view.apply {
+                    input_judul.setError("Judul tidak boleh kosong")
+                    input_judul.requestFocus()
+                }
+            }
+            return false
+        }else{
+            return true
+        }
     }
 
     companion object {
