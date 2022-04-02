@@ -30,8 +30,6 @@ class LoginFragment : Fragment() , View.OnClickListener{
     private lateinit var email: String
     private lateinit var password: String
     private var cek: Boolean = false
-    private lateinit var user : User
-    private lateinit var mBundle: Bundle
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,13 +41,12 @@ class LoginFragment : Fragment() , View.OnClickListener{
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        sharedPreferences = requireActivity().getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
-        val email = sharedPreferences.getString(HomeFragment.EMAIL, "")
+        sharedPreferences = requireActivity().getSharedPreferences(HomeFragment.PREF_USER, Context.MODE_PRIVATE)
+
         userDatabase = UserDatabase.getInstance(requireContext())
 
-        if (email != ""){
-            val mBundle = bundleOf(HomeFragment.EMAIL to email)
-            Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_homeFragment, mBundle)
+        if (sharedPreferences.contains(HomeFragment.EMAIL)){
+            Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_homeFragment)
         }
         binding.btnLogin.setOnClickListener(this)
         binding.btnRegister.setOnClickListener(this)
@@ -109,14 +106,13 @@ class LoginFragment : Fragment() , View.OnClickListener{
     private fun loginUser(email : String, password : String) {
         GlobalScope.async {
             val user = userDatabase?.userDao()?.getUserRegistered(email)
-            val mBundle = bundleOf(HomeFragment.EXTRA_USER to user)
             requireActivity().runOnUiThread{
                 if (user != null) {
                     if (email == user.email && password == user.password){
-                        val editor:SharedPreferences.Editor = sharedPreferences.edit()
+                        val editor = sharedPreferences.edit()
                         editor.putString(HomeFragment.EMAIL, email)
                         editor.apply()
-                        Navigation.findNavController(requireView()).navigate(R.id.action_loginFragment_to_homeFragment, mBundle)
+                        Navigation.findNavController(requireView()).navigate(R.id.action_loginFragment_to_homeFragment)
                     }else{
                         Toast.makeText(requireContext(), "Password yang anda masukkan salah", Toast.LENGTH_SHORT).show()
                     }

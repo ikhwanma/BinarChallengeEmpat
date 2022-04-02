@@ -10,8 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.os.bundleOf
-import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import ikhwan.binar.binarchallengeempat.R
@@ -50,12 +48,12 @@ class HomeFragment : Fragment(), View.OnClickListener {
         noteDatabase = NoteDatabase.getInstance(requireContext())!!
         userDatabase = UserDatabase.getInstance(requireContext())!!
         sharedPreferences =
-            requireActivity().getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
+            requireActivity().getSharedPreferences(PREF_USER, Context.MODE_PRIVATE)
         val email = sharedPreferences.getString(EMAIL, "").toString()
-        Log.d(EXTRA_USER, "${email} halo")
 
         GlobalScope.async {
             user = userDatabase.userDao().getUserRegistered(email)
+            Log.d("vvvvvvvv", user.toString())
             val name =
                 user.nama.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
             val txtName =
@@ -73,10 +71,6 @@ class HomeFragment : Fragment(), View.OnClickListener {
             btnLogout.setOnClickListener(this@HomeFragment)
             btnFloatAdd.setOnClickListener(this@HomeFragment)
         }
-
-    }
-
-    private fun showMain() {
 
     }
 
@@ -101,7 +95,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
     override fun onClick(p0: View?) {
         when (p0?.id) {
             R.id.btn_logout -> {
-                val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                val editor = sharedPreferences.edit()
                 editor.clear()
                 editor.apply()
 
@@ -177,7 +171,8 @@ class HomeFragment : Fragment(), View.OnClickListener {
     }
 
     companion object {
-        const val EXTRA_USER = "extra_user"
+
+        const val PREF_USER = "user_preference"
         const val EMAIL = "email"
 
     }

@@ -84,7 +84,6 @@ class NoteAdapter(val listNote: List<Note>) : RecyclerView.Adapter<NoteAdapter.V
                     val noteUpdated = Note(note.id, judul, catatan, note.email)
                     editNote(holder, noteUpdated, view, dialog)
                 }
-
             }
 
             dialog.show()
