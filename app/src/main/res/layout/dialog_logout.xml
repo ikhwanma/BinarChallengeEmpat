@@ -8,7 +8,7 @@
     <TextView
         android:layout_margin="10dp"
         style="@style/TextStyle"
-        android:text="@string/hapus_data"
+        android:text="@string/yakin_ingin_logout"
         android:textSize="25sp"
         android:layout_gravity="center_horizontal"
         />
@@ -20,10 +20,11 @@
         android:paddingHorizontal="50dp">
 
         <Button
-            android:id="@+id/btn_hapus"
+            android:id="@+id/btn_logout"
             style="@style/ButtonStyle"
             android:layout_width="120dp"
-            android:text="@string/hapus" />
+            android:text="@string/logout"
+            android:textAllCaps="true"/>
 
         <Button
             android:id="@+id/btn_cancel"

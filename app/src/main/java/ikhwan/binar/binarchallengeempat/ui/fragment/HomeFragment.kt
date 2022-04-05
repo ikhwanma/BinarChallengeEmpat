@@ -16,8 +16,9 @@ import ikhwan.binar.binarchallengeempat.R
 import ikhwan.binar.binarchallengeempat.adapter.NoteAdapter
 import ikhwan.binar.binarchallengeempat.database.AppDatabase
 import ikhwan.binar.binarchallengeempat.database.Note
-
 import ikhwan.binar.binarchallengeempat.database.User
+import ikhwan.binar.binarchallengeempat.databinding.DialogAddBinding
+import ikhwan.binar.binarchallengeempat.databinding.DialogLogoutBinding
 import ikhwan.binar.binarchallengeempat.databinding.FragmentHomeBinding
 import kotlinx.android.synthetic.main.dialog_add.view.*
 import kotlinx.coroutines.GlobalScope
@@ -93,12 +94,23 @@ class HomeFragment : Fragment(), View.OnClickListener {
     override fun onClick(p0: View?) {
         when (p0?.id) {
             R.id.btn_logout -> {
-                val editor = sharedPreferences.edit()
-                editor.clear()
-                editor.apply()
+                val bindingLogout = DialogLogoutBinding.inflate(layoutInflater)
+                val dialogBuilder = AlertDialog.Builder(requireContext()).setView(bindingLogout.root)
+                val dialog = dialogBuilder.create()
+                dialog.show()
+                bindingLogout.btnLogout.setOnClickListener {
+                    val editor = sharedPreferences.edit()
+                    editor.clear()
+                    editor.apply()
 
-                p0.findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
-                Toast.makeText(requireContext(), "Anda telah logout", Toast.LENGTH_SHORT).show()
+                    p0.findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
+                    Toast.makeText(requireContext(), "Anda telah logout", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
+                bindingLogout.btnCancel.setOnClickListener {
+                    dialog.dismiss()
+                }
+
             }
             R.id.btn_float_add -> {
                 showDialog()
@@ -107,14 +119,14 @@ class HomeFragment : Fragment(), View.OnClickListener {
     }
 
     private fun showDialog() {
-        val view = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add, null, false)
+        val bindingAdd = DialogAddBinding.inflate(layoutInflater)
         val dialogBuilder = AlertDialog.Builder(requireContext())
-        dialogBuilder.setView(view)
+        dialogBuilder.setView(bindingAdd.root)
 
         val dialog = dialogBuilder.create()
 
-        view.btn_input.setOnClickListener {
-            add(view, dialog)
+        bindingAdd.btnInput.setOnClickListener {
+            add(bindingAdd.root, dialog)
         }
 
         dialog.show()

@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import ikhwan.binar.binarchallengeempat.R
 import ikhwan.binar.binarchallengeempat.database.AppDatabase
 import ikhwan.binar.binarchallengeempat.database.Note
+import ikhwan.binar.binarchallengeempat.databinding.DialogAddBinding
+import ikhwan.binar.binarchallengeempat.databinding.DialogDeleteBinding
 import ikhwan.binar.binarchallengeempat.databinding.ItemNoteBinding
 import ikhwan.binar.binarchallengeempat.ui.fragment.HomeFragment
 import kotlinx.android.synthetic.main.dialog_add.view.*
@@ -41,53 +43,55 @@ class NoteAdapter(val listNote: List<Note>) : RecyclerView.Adapter<NoteAdapter.V
         holder.binding.apply {
             tvJudul.text = note.judul
             tvNote.text = note.catatan
-        }
+            btnDelete.setOnClickListener {
+                val bindingDelete = DialogDeleteBinding.inflate(LayoutInflater.from(it.context))
+                val dialogBuilder = AlertDialog.Builder(it.context)
+                dialogBuilder.setView(bindingDelete.root)
 
-        holder.binding.btnDelete.setOnClickListener {
-            val view = LayoutInflater.from(it.context).inflate(R.layout.dialog_delete, null, false)
-            val dialogBuilder = AlertDialog.Builder(it.context)
-            dialogBuilder.setView(view)
+                val dialog = dialogBuilder.create()
+                dialog.show()
 
-            val dialog = dialogBuilder.create()
-            dialog.show()
-
-            view.btn_cancel.setOnClickListener {
-                dialog.dismiss()
-            }
-
-            view.btn_hapus.setOnClickListener {
-                deleteData(note, holder, it)
-                dialog.dismiss()
-            }
-
-        }
-
-        holder.binding.btnEdit.setOnClickListener {
-            val view = LayoutInflater.from(it.context).inflate(R.layout.dialog_add, null, false)
-            val dialogBuilder = AlertDialog.Builder(it.context)
-            dialogBuilder.setView(view)
-
-            val dialog = dialogBuilder.create()
-            val txtKeterangan = "Edit Data"
-            val txtButton = "EDIT"
-
-            view.tv_keterangan.setText(txtKeterangan)
-            view.input_judul.setText(note.judul)
-            view.input_catatan.setText(note.catatan)
-            view.btn_input.setText(txtButton)
-            view.btn_input.setOnClickListener {
-
-                val judul = view.input_judul.text.toString()
-                val catatan = view.input_catatan.text.toString()
-
-                if (checkInput(judul, catatan, view)){
-                    val noteUpdated = Note(note.id, judul, catatan, note.email)
-                    editNote(holder, noteUpdated, view, dialog)
+                bindingDelete.apply {
+                    btnCancel.setOnClickListener {
+                        dialog.dismiss()
+                    }
+                    btnHapus.setOnClickListener {
+                        deleteData(note, holder, bindingDelete.root)
+                        dialog.dismiss()
+                    }
                 }
             }
 
-            dialog.show()
+            btnEdit.setOnClickListener {
+                val bindingEdit = DialogAddBinding.inflate(LayoutInflater.from(it.context))
+                val dialogBuilder = AlertDialog.Builder(it.context)
+                dialogBuilder.setView(bindingEdit.root)
+
+                val dialog = dialogBuilder.create()
+                val txtKeterangan = "Edit Data"
+                val txtButton = "EDIT"
+
+                bindingEdit.apply {
+                    tvKeterangan.setText(txtKeterangan)
+                    inputJudul.setText(note.judul)
+                    inputCatatan.setText(note.catatan)
+                    btnInput.setText(txtButton)
+                    btnInput.setOnClickListener {
+
+                        val judul = bindingEdit.inputJudul.text.toString()
+                        val catatan = bindingEdit.inputCatatan.text.toString()
+
+                        if (checkInput(judul, catatan, bindingEdit.root)){
+                            val noteUpdated = Note(note.id, judul, catatan, note.email)
+                            editNote(holder, noteUpdated, bindingEdit.root, dialog)
+                        }
+                    }
+                }
+
+                dialog.show()
+            }
         }
+
     }
 
     private fun checkInput(judul: String, catatan: String, view: View) : Boolean{
