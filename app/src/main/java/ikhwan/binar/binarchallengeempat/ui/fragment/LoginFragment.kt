@@ -8,12 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import ikhwan.binar.binarchallengeempat.R
-import ikhwan.binar.binarchallengeempat.database.user.User
-import ikhwan.binar.binarchallengeempat.database.user.UserDatabase
+import ikhwan.binar.binarchallengeempat.database.AppDatabase
 import ikhwan.binar.binarchallengeempat.databinding.FragmentLoginBinding
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -24,7 +22,7 @@ class LoginFragment : Fragment() , View.OnClickListener{
 
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
-    private var userDatabase: UserDatabase? = null
+    private var appDatabase : AppDatabase? = null
     private lateinit var sharedPreferences: SharedPreferences
 
     private lateinit var email: String
@@ -43,7 +41,7 @@ class LoginFragment : Fragment() , View.OnClickListener{
         super.onViewCreated(view, savedInstanceState)
         sharedPreferences = requireActivity().getSharedPreferences(HomeFragment.PREF_USER, Context.MODE_PRIVATE)
 
-        userDatabase = UserDatabase.getInstance(requireContext())
+        appDatabase = AppDatabase.getInstance(requireContext())
 
         if (sharedPreferences.contains(HomeFragment.EMAIL)){
             Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_homeFragment)
@@ -105,7 +103,7 @@ class LoginFragment : Fragment() , View.OnClickListener{
 
     private fun loginUser(email : String, password : String) {
         GlobalScope.async {
-            val user = userDatabase?.userDao()?.getUserRegistered(email)
+            val user = appDatabase?.appDao()?.getUserRegistered(email)
             requireActivity().runOnUiThread{
                 if (user != null) {
                     if (email == user.email && password == user.password){

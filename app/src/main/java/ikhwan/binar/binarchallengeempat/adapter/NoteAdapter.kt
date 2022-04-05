@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import ikhwan.binar.binarchallengeempat.R
-import ikhwan.binar.binarchallengeempat.database.note.Note
-import ikhwan.binar.binarchallengeempat.database.note.NoteDatabase
+import ikhwan.binar.binarchallengeempat.database.AppDatabase
+import ikhwan.binar.binarchallengeempat.database.Note
 import ikhwan.binar.binarchallengeempat.databinding.ItemNoteBinding
 import ikhwan.binar.binarchallengeempat.ui.fragment.HomeFragment
 import kotlinx.android.synthetic.main.dialog_add.view.*
@@ -116,10 +116,10 @@ class NoteAdapter(val listNote: List<Note>) : RecyclerView.Adapter<NoteAdapter.V
         view: View,
         dialog: AlertDialog
     ) {
-        val noteDatabase = NoteDatabase.getInstance(holder.itemView.context)
+        val noteDatabase = AppDatabase.getInstance(holder.itemView.context)
 
         GlobalScope.async {
-            val result = noteDatabase?.noteDao()?.updateNote(noteUpdated)
+            val result = noteDatabase?.appDao()?.updateNote(noteUpdated)
             context!!.requireActivity().runOnUiThread {
                 if (result != 0) {
                     Toast.makeText(
@@ -141,10 +141,10 @@ class NoteAdapter(val listNote: List<Note>) : RecyclerView.Adapter<NoteAdapter.V
     }
 
     private fun deleteData(note: Note, holder: ViewHolder, view: View) {
-        val noteDatabase = NoteDatabase.getInstance(holder.itemView.context)
+        val noteDatabase = AppDatabase.getInstance(holder.itemView.context)
 
         GlobalScope.async {
-            val result = noteDatabase?.noteDao()?.deleteNote(note)
+            val result = noteDatabase?.appDao()?.deleteNote(note)
 
             context!!.requireActivity().runOnUiThread {
                 if (result != 0) {

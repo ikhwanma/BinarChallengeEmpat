@@ -1,4 +1,4 @@
-package ikhwan.binar.binarchallengeempat.database.user
+package ikhwan.binar.binarchallengeempat.database
 
 import android.os.Parcelable
 import androidx.room.ColumnInfo

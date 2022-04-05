@@ -1,10 +1,9 @@
-package ikhwan.binar.binarchallengeempat.database.note
+package ikhwan.binar.binarchallengeempat.database
 
 import androidx.room.*
-import ikhwan.binar.binarchallengeempat.database.user.User
 
 @Dao
-interface NoteDao {
+interface AppDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addNote(note: Note): Long
 
@@ -16,4 +15,10 @@ interface NoteDao {
 
     @Query("SELECT * FROM Note WHERE Note.email = :email")
     fun getNote(email: String) : List<Note>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun registerUser(user: User):Long
+
+    @Query("SELECT * FROM User WHERE User.email = :email")
+    fun getUserRegistered(email:String): User
 }

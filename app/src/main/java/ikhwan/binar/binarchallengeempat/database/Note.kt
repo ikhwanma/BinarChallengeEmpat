@@ -1,4 +1,4 @@
-package ikhwan.binar.binarchallengeempat.database.note
+package ikhwan.binar.binarchallengeempat.database
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

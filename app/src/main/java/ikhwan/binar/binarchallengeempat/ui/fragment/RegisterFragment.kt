@@ -8,10 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
 import ikhwan.binar.binarchallengeempat.R
-import ikhwan.binar.binarchallengeempat.database.user.User
-import ikhwan.binar.binarchallengeempat.database.user.UserDatabase
+import ikhwan.binar.binarchallengeempat.database.AppDatabase
+import ikhwan.binar.binarchallengeempat.database.User
 import ikhwan.binar.binarchallengeempat.databinding.FragmentRegisterBinding
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -22,7 +21,7 @@ class RegisterFragment : Fragment() , View.OnClickListener{
     private var _binding: FragmentRegisterBinding? = null
     private val binding get() = _binding!!
 
-    private var userDatabase: UserDatabase? = null
+    private var appDatabase : AppDatabase? = null
 
     private lateinit var name: String
     private lateinit var email: String
@@ -40,7 +39,7 @@ class RegisterFragment : Fragment() , View.OnClickListener{
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        userDatabase = UserDatabase.getInstance(requireContext())
+        appDatabase = AppDatabase.getInstance(requireContext())
         binding.btnRegister.setOnClickListener(this)
     }
 
@@ -68,7 +67,7 @@ class RegisterFragment : Fragment() , View.OnClickListener{
     private fun registerUser(name: String, email: String, password: String) {
         val user = User(null, name, email, password)
         GlobalScope.async {
-            val cekUser = userDatabase?.userDao()?.getUserRegistered(email)
+            val cekUser = appDatabase?.appDao()?.getUserRegistered(email)
             Log.d("cekuser", cekUser.toString())
             if (cekUser != null) {
                 requireActivity().runOnUiThread {
@@ -79,7 +78,7 @@ class RegisterFragment : Fragment() , View.OnClickListener{
                     ).show()
                 }
             } else {
-                val result = userDatabase?.userDao()?.registerUser(user)
+                val result = appDatabase?.appDao()?.registerUser(user)
                 requireActivity().runOnUiThread {
                     if (result != 0.toLong()) {
                         Toast.makeText(

@@ -14,10 +14,10 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import ikhwan.binar.binarchallengeempat.R
 import ikhwan.binar.binarchallengeempat.adapter.NoteAdapter
-import ikhwan.binar.binarchallengeempat.database.note.Note
-import ikhwan.binar.binarchallengeempat.database.note.NoteDatabase
-import ikhwan.binar.binarchallengeempat.database.user.User
-import ikhwan.binar.binarchallengeempat.database.user.UserDatabase
+import ikhwan.binar.binarchallengeempat.database.AppDatabase
+import ikhwan.binar.binarchallengeempat.database.Note
+
+import ikhwan.binar.binarchallengeempat.database.User
 import ikhwan.binar.binarchallengeempat.databinding.FragmentHomeBinding
 import kotlinx.android.synthetic.main.dialog_add.view.*
 import kotlinx.coroutines.GlobalScope
@@ -30,8 +30,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var noteDatabase: NoteDatabase
-    private lateinit var userDatabase: UserDatabase
+    private lateinit var appDatabase: AppDatabase
     private lateinit var user: User
     private lateinit var sharedPreferences: SharedPreferences
 
@@ -45,14 +44,13 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        noteDatabase = NoteDatabase.getInstance(requireContext())!!
-        userDatabase = UserDatabase.getInstance(requireContext())!!
+        appDatabase = AppDatabase.getInstance(requireContext())!!
         sharedPreferences =
             requireActivity().getSharedPreferences(PREF_USER, Context.MODE_PRIVATE)
         val email = sharedPreferences.getString(EMAIL, "").toString()
 
         GlobalScope.async {
-            user = userDatabase.userDao().getUserRegistered(email)
+            user = appDatabase.appDao().getUserRegistered(email)
             Log.d("vvvvvvvv", user.toString())
             val name =
                 user.nama.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
@@ -76,7 +74,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
     fun fetchData() {
         GlobalScope.launch {
-            val listNote = noteDatabase.noteDao().getNote(user.email)
+            val listNote = appDatabase.appDao().getNote(user.email)
 
             requireActivity().runOnUiThread {
                 listNote.let {
@@ -136,7 +134,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
     private fun addNote(dialog: AlertDialog, note: Note) {
         GlobalScope.async {
-            val result = noteDatabase.noteDao().addNote(note)
+            val result = appDatabase.appDao().addNote(note)
             requireActivity().runOnUiThread {
                 if (result != 0.toLong()) {
                     dialog.dismiss()
