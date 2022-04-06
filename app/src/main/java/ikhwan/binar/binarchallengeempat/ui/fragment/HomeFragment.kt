@@ -21,11 +21,13 @@ import ikhwan.binar.binarchallengeempat.databinding.DialogAddBinding
 import ikhwan.binar.binarchallengeempat.databinding.DialogLogoutBinding
 import ikhwan.binar.binarchallengeempat.databinding.FragmentHomeBinding
 import kotlinx.android.synthetic.main.dialog_add.view.*
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.util.*
 
+@DelicateCoroutinesApi
 class HomeFragment : Fragment(), View.OnClickListener {
 
     private var _binding: FragmentHomeBinding? = null

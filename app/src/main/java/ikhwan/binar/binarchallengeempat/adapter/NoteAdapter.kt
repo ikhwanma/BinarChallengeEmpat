@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import ikhwan.binar.binarchallengeempat.R
 import ikhwan.binar.binarchallengeempat.database.AppDatabase
 import ikhwan.binar.binarchallengeempat.database.Note
 import ikhwan.binar.binarchallengeempat.databinding.DialogAddBinding
@@ -14,12 +13,13 @@ import ikhwan.binar.binarchallengeempat.databinding.DialogDeleteBinding
 import ikhwan.binar.binarchallengeempat.databinding.ItemNoteBinding
 import ikhwan.binar.binarchallengeempat.ui.fragment.HomeFragment
 import kotlinx.android.synthetic.main.dialog_add.view.*
-import kotlinx.android.synthetic.main.dialog_delete.view.*
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 
 
-class NoteAdapter(val listNote: List<Note>) : RecyclerView.Adapter<NoteAdapter.ViewHolder>() {
+@DelicateCoroutinesApi
+class NoteAdapter(private val listNote: List<Note>) : RecyclerView.Adapter<NoteAdapter.ViewHolder>() {
 
     private var context: HomeFragment? = null
 
@@ -72,10 +72,10 @@ class NoteAdapter(val listNote: List<Note>) : RecyclerView.Adapter<NoteAdapter.V
                 val txtButton = "EDIT"
 
                 bindingEdit.apply {
-                    tvKeterangan.setText(txtKeterangan)
+                    tvKeterangan.text = txtKeterangan
                     inputJudul.setText(note.judul)
                     inputCatatan.setText(note.catatan)
-                    btnInput.setText(txtButton)
+                    btnInput.text = txtButton
                     btnInput.setOnClickListener {
 
                         val judul = bindingEdit.inputJudul.text.toString()
@@ -93,6 +93,7 @@ class NoteAdapter(val listNote: List<Note>) : RecyclerView.Adapter<NoteAdapter.V
         }
 
     }
+
 
     private fun checkInput(judul: String, catatan: String, view: View) : Boolean{
         if (judul.isEmpty() || catatan.isEmpty()) {
@@ -113,6 +114,7 @@ class NoteAdapter(val listNote: List<Note>) : RecyclerView.Adapter<NoteAdapter.V
             return true
         }
     }
+
 
     private fun editNote(
         holder: ViewHolder,

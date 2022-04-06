@@ -13,11 +13,13 @@ import androidx.navigation.findNavController
 import ikhwan.binar.binarchallengeempat.R
 import ikhwan.binar.binarchallengeempat.database.AppDatabase
 import ikhwan.binar.binarchallengeempat.databinding.FragmentLoginBinding
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import java.util.regex.Pattern
 
 
+@DelicateCoroutinesApi
 class LoginFragment : Fragment() , View.OnClickListener{
 
     private var _binding: FragmentLoginBinding? = null
@@ -124,8 +126,8 @@ class LoginFragment : Fragment() , View.OnClickListener{
 
     private fun isValidEmail(email: String): Boolean {
         val EMAIL_ADDRESS_PATTERN = Pattern.compile(
-            "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
-                    "\\@" +
+            "[a-zA-Z0-9+._%\\-]{1,256}" +
+                    "@" +
                     "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
                     "(" +
                     "\\." +
