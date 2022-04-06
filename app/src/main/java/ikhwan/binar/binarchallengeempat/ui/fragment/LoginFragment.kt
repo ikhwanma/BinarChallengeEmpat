@@ -3,6 +3,9 @@ package ikhwan.binar.binarchallengeempat.ui.fragment
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.InputType
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -29,6 +32,7 @@ class LoginFragment : Fragment() , View.OnClickListener{
 
     private lateinit var email: String
     private lateinit var password: String
+    private var viewPass : Boolean = false
     private var cek: Boolean = false
 
     override fun onCreateView(
@@ -50,6 +54,7 @@ class LoginFragment : Fragment() , View.OnClickListener{
         }
         binding.btnLogin.setOnClickListener(this)
         binding.btnRegister.setOnClickListener(this)
+        binding.btnViewPass.setOnClickListener(this)
     }
 
     override fun onClick(p0: View?) {
@@ -59,6 +64,21 @@ class LoginFragment : Fragment() , View.OnClickListener{
             }
             R.id.btn_register -> {
                 p0.findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+            }
+            R.id.btn_view_pass -> {
+                if (viewPass == false){
+                    binding.apply {
+                        btnViewPass.setImageResource(R.drawable.ic_green_eye_24)
+                        inputPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
+                    }
+                    viewPass = true
+                }else{
+                    binding.apply {
+                        btnViewPass.setImageResource(R.drawable.ic_outline_remove_green_eye_24)
+                        inputPassword.transformationMethod = PasswordTransformationMethod.getInstance()
+                    }
+                    viewPass = false
+                }
             }
         }
     }

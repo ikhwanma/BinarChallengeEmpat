@@ -1,6 +1,8 @@
 package ikhwan.binar.binarchallengeempat.ui.fragment
 
 import android.os.Bundle
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -27,6 +29,8 @@ class RegisterFragment : Fragment() , View.OnClickListener{
     private lateinit var email: String
     private lateinit var password: String
     private var cek: Boolean = false
+    private var viewPass : Boolean = false
+    private var viewKonfPass : Boolean = false
 
 
     override fun onCreateView(
@@ -40,13 +44,47 @@ class RegisterFragment : Fragment() , View.OnClickListener{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         appDatabase = AppDatabase.getInstance(requireContext())
-        binding.btnRegister.setOnClickListener(this)
+        binding.apply {
+            btnRegister.setOnClickListener(this@RegisterFragment)
+            btnViewPass.setOnClickListener(this@RegisterFragment)
+            btnViewKonfPass.setOnClickListener(this@RegisterFragment)
+        }
     }
 
     override fun onClick(p0: View?) {
         when(p0?.id){
             R.id.btn_register -> {
                 register()
+            }
+            R.id.btn_view_pass ->{
+                if (viewPass == false){
+                    binding.apply {
+                        btnViewPass.setImageResource(R.drawable.ic_green_eye_24)
+                        inputPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
+                    }
+                    viewPass = true
+                }else{
+                    binding.apply {
+                        btnViewPass.setImageResource(R.drawable.ic_outline_remove_green_eye_24)
+                        inputPassword.transformationMethod = PasswordTransformationMethod.getInstance()
+                    }
+                    viewPass = false
+                }
+            }
+            R.id.btn_view_konf_pass -> {
+                if (viewKonfPass == false){
+                    binding.apply {
+                        btnViewKonfPass.setImageResource(R.drawable.ic_green_eye_24)
+                        inputKonfPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
+                    }
+                    viewKonfPass = true
+                }else{
+                    binding.apply {
+                        btnViewKonfPass.setImageResource(R.drawable.ic_outline_remove_green_eye_24)
+                        inputKonfPassword.transformationMethod = PasswordTransformationMethod.getInstance()
+                    }
+                    viewKonfPass = false
+                }
             }
         }
     }
