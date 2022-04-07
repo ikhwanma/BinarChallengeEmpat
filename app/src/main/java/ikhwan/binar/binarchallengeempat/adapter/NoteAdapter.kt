@@ -20,7 +20,6 @@ import kotlinx.coroutines.async
 class NoteAdapter(private val listNote: List<Note>, val context: HomeFragment) : RecyclerView.Adapter<NoteAdapter.ViewHolder>() {
     class ViewHolder(var binding: ItemNoteBinding) : RecyclerView.ViewHolder(binding.root)
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemNoteBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
@@ -118,7 +117,7 @@ class NoteAdapter(private val listNote: List<Note>, val context: HomeFragment) :
 
         GlobalScope.async {
             val result = noteDatabase?.appDao()?.updateNote(noteUpdated)
-            context!!.requireActivity().runOnUiThread {
+            context.requireActivity().runOnUiThread {
                 if (result != 0) {
                     Toast.makeText(
                         view.context,
@@ -134,7 +133,7 @@ class NoteAdapter(private val listNote: List<Note>, val context: HomeFragment) :
                 }
             }
             dialog.dismiss()
-            context!!.fetchData()
+            context.fetchData()
         }
     }
 
@@ -144,7 +143,7 @@ class NoteAdapter(private val listNote: List<Note>, val context: HomeFragment) :
         GlobalScope.async {
             val result = noteDatabase?.appDao()?.deleteNote(note)
 
-            context!!.requireActivity().runOnUiThread {
+            context.requireActivity().runOnUiThread {
                 if (result != 0) {
                     Toast.makeText(
                         view.context,
@@ -160,7 +159,7 @@ class NoteAdapter(private val listNote: List<Note>, val context: HomeFragment) :
                 }
             }
 
-            context!!.fetchData()
+            context.fetchData()
         }
 
     }

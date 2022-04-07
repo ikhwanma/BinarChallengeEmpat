@@ -103,7 +103,7 @@ class RegisterFragment : Fragment() , View.OnClickListener{
     }
 
     private fun registerUser(name: String, email: String, password: String) {
-        val user = User(null, name, email, password)
+        val user = User(email, name, password)
         GlobalScope.async {
             val cekUser = appDatabase?.appDao()?.getUserRegistered(email)
             if (cekUser != null) {
@@ -198,11 +198,6 @@ class RegisterFragment : Fragment() , View.OnClickListener{
                     ")+"
         )
         return EMAIL_ADDRESS_PATTERN.matcher(email).matches()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
     }
 
 

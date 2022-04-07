@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BinarChallengeEmpat</string>
+    <string name="app_name">MyNote</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="masukkan_email">Masukkan Email</string>

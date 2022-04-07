@@ -46,25 +46,27 @@ class HomeFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         appDatabase = AppDatabase.getInstance(requireContext())!!
-        sharedPreferences =
-            requireActivity().getSharedPreferences(PREF_USER, Context.MODE_PRIVATE)
+        sharedPreferences = requireActivity().getSharedPreferences(PREF_USER, Context.MODE_PRIVATE)
         val email = sharedPreferences.getString(EMAIL, "").toString()
+        Log.d("vvvvvvvvv", "email shared : $email")
 
-        Log.d("vvvvvvvvv", email)
-
+        binding.rvNotes.layoutManager = LinearLayoutManager(activity)
         GlobalScope.async {
             user = appDatabase.appDao().getUserRegistered(email)
-            val name =
-                user.nama.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
-            val txtName =
-                " $name!"
+            Log.d("vvvvvvvvv", "Data user : $user")
+            requireActivity().runOnUiThread {
+                val name =
+                    user.nama.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+                val txtName = " $name!"
 
-            binding.apply {
-                tvUsername.append(txtName)
+                binding.apply {
+                    tvUsername.append(txtName)
+                }
+
+                fetchData()
             }
 
-            binding.rvNotes.layoutManager = LinearLayoutManager(activity)
-            fetchData()
+
         }
 
         binding.apply {
@@ -81,7 +83,6 @@ class HomeFragment : Fragment(), View.OnClickListener {
             requireActivity().runOnUiThread {
                 listNote.let {
                     val adapter = NoteAdapter(listNote, this@HomeFragment)
-
                     if (adapter.itemCount == 0){
                         binding.llWarn.visibility = View.VISIBLE
                     }else{
@@ -189,6 +190,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
             return true
         }
     }
+
 
     companion object {
 
