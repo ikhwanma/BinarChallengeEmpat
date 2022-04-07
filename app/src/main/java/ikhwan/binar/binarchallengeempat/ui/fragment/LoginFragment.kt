@@ -43,6 +43,11 @@ class LoginFragment : Fragment() , View.OnClickListener{
         return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         sharedPreferences = requireActivity().getSharedPreferences(HomeFragment.PREF_USER, Context.MODE_PRIVATE)

@@ -106,7 +106,6 @@ class RegisterFragment : Fragment() , View.OnClickListener{
         val user = User(null, name, email, password)
         GlobalScope.async {
             val cekUser = appDatabase?.appDao()?.getUserRegistered(email)
-            Log.d("cekuser", cekUser.toString())
             if (cekUser != null) {
                 requireActivity().runOnUiThread {
                     Toast.makeText(

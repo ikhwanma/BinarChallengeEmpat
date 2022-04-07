@@ -17,10 +17,8 @@ import ikhwan.binar.binarchallengeempat.adapter.NoteAdapter
 import ikhwan.binar.binarchallengeempat.database.AppDatabase
 import ikhwan.binar.binarchallengeempat.database.Note
 import ikhwan.binar.binarchallengeempat.database.User
-import ikhwan.binar.binarchallengeempat.databinding.DialogAddBinding
-import ikhwan.binar.binarchallengeempat.databinding.DialogLogoutBinding
-import ikhwan.binar.binarchallengeempat.databinding.FragmentHomeBinding
-import kotlinx.android.synthetic.main.dialog_add.view.*
+import ikhwan.binar.binarchallengeempat.databinding.*
+import kotlinx.android.synthetic.main.dialog_add_edit.view.*
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -52,9 +50,10 @@ class HomeFragment : Fragment(), View.OnClickListener {
             requireActivity().getSharedPreferences(PREF_USER, Context.MODE_PRIVATE)
         val email = sharedPreferences.getString(EMAIL, "").toString()
 
+        Log.d("vvvvvvvvv", email)
+
         GlobalScope.async {
             user = appDatabase.appDao().getUserRegistered(email)
-            Log.d("vvvvvvvv", user.toString())
             val name =
                 user.nama.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
             val txtName =
@@ -81,7 +80,8 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
             requireActivity().runOnUiThread {
                 listNote.let {
-                    val adapter = NoteAdapter(it, this@HomeFragment)
+                    val adapter = NoteAdapter(listNote, this@HomeFragment)
+
                     if (adapter.itemCount == 0){
                         binding.llWarn.visibility = View.VISIBLE
                     }else{
@@ -96,11 +96,19 @@ class HomeFragment : Fragment(), View.OnClickListener {
     override fun onClick(p0: View?) {
         when (p0?.id) {
             R.id.btn_logout -> {
-                val bindingLogout = DialogLogoutBinding.inflate(layoutInflater)
+                val bindingLogout = DialogDeleteLogoutBinding.inflate(layoutInflater)
                 val dialogBuilder = AlertDialog.Builder(requireContext()).setView(bindingLogout.root)
                 val dialog = dialogBuilder.create()
                 dialog.show()
-                bindingLogout.btnLogout.setOnClickListener {
+
+                bindingLogout.apply {
+                    val txtLogout = "Logout"
+                    val txtKeterangan = "Yakin Ingin Logout?"
+                    btnHapus.setText(txtLogout)
+                    tvKeterangan.text = txtKeterangan
+                }
+
+                bindingLogout.btnHapus.setOnClickListener {
                     val editor = sharedPreferences.edit()
                     editor.clear()
                     editor.apply()
@@ -121,7 +129,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
     }
 
     private fun showDialog() {
-        val bindingAdd = DialogAddBinding.inflate(layoutInflater)
+        val bindingAdd = DialogAddEditBinding.inflate(layoutInflater)
         val dialogBuilder = AlertDialog.Builder(requireContext())
         dialogBuilder.setView(bindingAdd.root)
 

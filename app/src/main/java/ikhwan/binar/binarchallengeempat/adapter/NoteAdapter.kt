@@ -8,26 +8,18 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import ikhwan.binar.binarchallengeempat.database.AppDatabase
 import ikhwan.binar.binarchallengeempat.database.Note
-import ikhwan.binar.binarchallengeempat.databinding.DialogAddBinding
-import ikhwan.binar.binarchallengeempat.databinding.DialogDeleteBinding
-import ikhwan.binar.binarchallengeempat.databinding.ItemNoteBinding
+import ikhwan.binar.binarchallengeempat.databinding.*
 import ikhwan.binar.binarchallengeempat.ui.fragment.HomeFragment
-import kotlinx.android.synthetic.main.dialog_add.view.*
+import kotlinx.android.synthetic.main.dialog_add_edit.view.*
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 
 
 @DelicateCoroutinesApi
-class NoteAdapter(private val listNote: List<Note>) : RecyclerView.Adapter<NoteAdapter.ViewHolder>() {
-
-    private var context: HomeFragment? = null
-
+class NoteAdapter(private val listNote: List<Note>, val context: HomeFragment) : RecyclerView.Adapter<NoteAdapter.ViewHolder>() {
     class ViewHolder(var binding: ItemNoteBinding) : RecyclerView.ViewHolder(binding.root)
 
-    constructor(listNote: List<Note>, context: HomeFragment) : this(listNote) {
-        this.context = context
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemNoteBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -44,7 +36,7 @@ class NoteAdapter(private val listNote: List<Note>) : RecyclerView.Adapter<NoteA
             tvJudul.text = note.judul
             tvNote.text = note.catatan
             btnDelete.setOnClickListener {
-                val bindingDelete = DialogDeleteBinding.inflate(LayoutInflater.from(it.context))
+                val bindingDelete = DialogDeleteLogoutBinding.inflate(LayoutInflater.from(it.context))
                 val dialogBuilder = AlertDialog.Builder(it.context)
                 dialogBuilder.setView(bindingDelete.root)
 
@@ -63,7 +55,7 @@ class NoteAdapter(private val listNote: List<Note>) : RecyclerView.Adapter<NoteA
             }
 
             btnEdit.setOnClickListener {
-                val bindingEdit = DialogAddBinding.inflate(LayoutInflater.from(it.context))
+                val bindingEdit = DialogAddEditBinding.inflate(LayoutInflater.from(it.context))
                 val dialogBuilder = AlertDialog.Builder(it.context)
                 dialogBuilder.setView(bindingEdit.root)
 
